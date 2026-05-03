@@ -29,12 +29,14 @@ def _build_proxy() -> str | None:
 
 def make_client(timeout: float = 20.0) -> httpx.AsyncClient:
     proxy = _build_proxy()
-    return httpx.AsyncClient(
+    kwargs = dict(
         headers=DEFAULT_HEADERS,
         timeout=timeout,
         follow_redirects=True,
-        proxies={"all://": proxy} if proxy else None,
     )
+    if proxy:
+        kwargs["proxy"] = proxy
+    return httpx.AsyncClient(**kwargs)
 
 
 def extract_emails(text: str) -> list[str]:
